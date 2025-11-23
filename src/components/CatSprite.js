@@ -34,7 +34,7 @@ const isSelected = sprite.id === manager.selectedId;
       sprite.x = origX + dx;
       sprite.y = origY + dy;
 
-      // Trigger continuous collision checks
+
       manager.checkCollisions();
     };
 
