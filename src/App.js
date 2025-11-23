@@ -5,7 +5,7 @@ import PreviewArea from "./components/PreviewArea";
 import PlayBar from "./components/PlayBar";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import SpriteManager from './components/spirteManager';
+import SpriteManager from './components/SpriteManager';
 import React, { useState } from "react";
 
 export default function App() {

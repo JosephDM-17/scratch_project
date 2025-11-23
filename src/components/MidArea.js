@@ -1,6 +1,6 @@
 
 import React from "react";
-import BlockCanvas from "./blockCanvas";
+import BlockCanvas from "./BlockCanvas";
 export default function MidArea({ manager }) {
 const sprite = manager.sprites.find(s => s.id === manager.selectedId);
 
