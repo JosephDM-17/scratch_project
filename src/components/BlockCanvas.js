@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useDrop } from "react-dnd";
 import { v4 as uuid } from "uuid";
-import Block from "./block";
+import Block from "./block.js";
 
 export default function BlockCanvas({ manager }) {
   const [{ isOver }, drop] = useDrop(() => ({
