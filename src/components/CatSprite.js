@@ -16,7 +16,7 @@ const isSelected = sprite.id === manager.selectedId;
   borderRadius: "8px"
 };
 
-  // Handle drag logic
+
   const onMouseDown = (e) => {
     manager.selectSprite(sprite.id);
     setDragging(true);
