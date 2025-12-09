@@ -7,7 +7,14 @@ export default function PlayBar({ manager }) {
         onClick={manager.playAll}
         className="bg-green-500 text-white px-3 py-1 rounded shadow"
       >
-        ▶️ Play
+        ▶️ Play All
+      </button>
+
+      <button
+        onClick={manager.playSelected}
+        className="bg-green-600 text-white px-3 py-1 rounded shadow"
+      >
+         Play Selected
       </button>
 
       <button

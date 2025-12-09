@@ -6,7 +6,10 @@ import Block from "./Block.js";
 export default function BlockCanvas({ manager }) {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: "BLOCK",
-    drop: (item) => onDrop(item),
+    drop: (item, monitor) => {
+        if (monitor.didDrop()) return;
+        onDrop(item);
+    },
     collect: (monitor) => ({ isOver: !!monitor.isOver() }),
   }));
 
@@ -54,7 +57,7 @@ export default function BlockCanvas({ manager }) {
       )}
 
       {script?.map((n) => (
-        <Block key={n.id} node={n} />
+        <Block key={n.id} node={n} manager={manager} />
       ))}
     </div>
   );

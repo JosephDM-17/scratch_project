@@ -95,30 +95,105 @@ addSprite = () => {
     if (!s) return;
 
     s.script.push(node);
-    this.interpreters.set(s.id, new Interpreter(s, this));
+    
+    // Update interpreter if running (handled by step or reset)
+  };
+
+  addNodeToRepeat = (parentId, node) => {
+      const s = this.sprites.find((x) => x.id === this.selectedId);
+      if (!s) return;
+
+      const parent = this.findNodeRecursive(s.script, parentId);
+      if (parent && parent.children) {
+          // We need to create a new node object from the drop item
+          // The block drop item only has 'type'
+          // We need to instantiate it similar to BlockCanvas onDrop
+         const newNode = this.createNodeFromType(node.type);
+         parent.children.push(newNode);
+         if (this.forceUpdate) this.forceUpdate();
+      }
+  }
+  
+  createNodeFromType = (type) => {
+      const id = uuid();
+      const [cat, cmd] = type.split(":");
+      let node = { id, type, args: {} };
+
+      if (cat === "motion") {
+        if (cmd === "move") node.args = { steps: 10 };
+        if (cmd === "turn") node.args = { deg: 15 };
+        if (cmd === "goto") node.args = { x: 0, y: 0 };
+      }
+
+      if (cat === "looks") {
+        if (cmd === "say") node.args = { text: "hi", sec: 1 };
+        if (cmd === "think") node.args = { text: "hmm", sec: 1 };
+      }
+      
+      if (cat === "control" && cmd === "repeat") {
+          node.args = { count: 5 };
+          node.children = [];
+      }
+      return node;
+  }
+
+  findNodeRecursive = (list, id) => {
+      for (const node of list) {
+          if (node.id === id) return node;
+          if (node.children) {
+              const found = this.findNodeRecursive(node.children, id);
+              if (found) return found;
+          }
+      }
+      return null;
+  }
+
+  updateNode = (nodeId, newArgs) => {
+    const s = this.sprites.find((x) => x.id === this.selectedId);
+    if (!s) return;
+
+    const node = this.findNodeRecursive(s.script, nodeId);
+    if (node) {
+      node.args = { ...node.args, ...newArgs };
+      if (this.forceUpdate) this.forceUpdate();
+    }
   };
 
 
   playAll = () => {
     this.running = true;
+    this.interpreters.clear();
 
     this.sprites.forEach((s) =>
       this.interpreters.set(s.id, new Interpreter(s, this))
     );
 
-    const tick = () => {
+    this.runLoop();
+  };
+
+  playSelected = () => {
+    this.running = true;
+    this.interpreters.clear();
+    const s = this.sprites.find((x) => x.id === this.selectedId);
+    if (s) {
+      this.interpreters.set(s.id, new Interpreter(s, this));
+    }
+    this.runLoop();
+  }
+
+  runLoop = () => {
+      const tick = () => {
       if (!this.running) return;
 
-      this.sprites.forEach((s) => {
-        this.interpreters.get(s.id).step();
-      });
+      // Only step interpreters that exist
+      this.interpreters.forEach(i => i.step());
 
       this.checkCollisions();
       requestAnimationFrame(tick);
     };
 
     tick();
-  };
+  }
 
 
   stopAll = () => {
